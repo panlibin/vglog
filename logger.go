@@ -141,7 +141,6 @@ func (l *Logger) createFiles(sev Severity) error {
 func (l *Logger) output(s Severity, buf *buffer) {
 	l.mu.Lock()
 	data := buf.Bytes()
-	os.Stderr.Write(data)
 	if l.file[s] == nil {
 		if err := l.createFiles(s); err != nil {
 			return
@@ -159,6 +158,7 @@ func (l *Logger) output(s Severity, buf *buffer) {
 		fallthrough
 	case SeverityDebug:
 		l.file[SeverityDebug].Write(data)
+		os.Stderr.Write(data)
 	}
 
 	l.mu.Unlock()
