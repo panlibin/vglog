@@ -146,18 +146,12 @@ func (l *Logger) output(s Severity, buf *buffer) {
 			return
 		}
 	}
-	switch s {
-	case SeverityError:
-		l.file[SeverityError].Write(data)
-		fallthrough
-	case SeverityWarning:
-		l.file[SeverityWarning].Write(data)
-		fallthrough
-	case SeverityInfo:
-		l.file[SeverityInfo].Write(data)
-		fallthrough
-	case SeverityDebug:
-		l.file[SeverityDebug].Write(data)
+
+	slimit := l.severityLimit.get()
+	for i := s; i >= slimit; i-- {
+		l.file[i].Write(data)
+	}
+	if slimit == SeverityDebug {
 		os.Stderr.Write(data)
 	}
 
